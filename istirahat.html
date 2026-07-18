@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Istirahat Dulu Yuk</title>
+<style>
+  :root {
+    --bg1: #dff3ec;
+    --bg2: #cfe8f3;
+    --card: #ffffff;
+    --text: #2f4858;
+    --accent: #6fb7a8;
+    --accent-dark: #4d9587;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    color: var(--text);
+  }
+
+  .card {
+    background: var(--card);
+    padding: 50px 60px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    max-width: 90%;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 0 30px 0;
+  }
+
+  .timer {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--accent-dark);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .sub {
+    font-size: 0.95rem;
+    color: #7a8a94;
+    margin-bottom: 10px;
+  }
+
+  .done {
+    display: none;
+    font-size: 1.3rem;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+
+  .bar-bg {
+    width: 100%;
+    height: 8px;
+    background: #eef4f2;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 1s linear;
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Istirahat dlu yuk, 5 menit 🌿</h1>
+    <div class="timer" id="timer">05:00</div>
+    <div class="sub" id="subtext">Tarik napas, regangkan badan, lihat sesuatu yang jauh dulu ya.</div>
+    <div class="bar-bg">
+      <div class="bar-fill" id="bar"></div>
+    </div>
+    <div class="done" id="doneMsg">Selesai! Selamat kembali beraktivitas 😊</div>
+  </div>
+
+<script>
+  const DURATION = 5 * 60; // ubah di sini kalau mau ganti durasi (dalam detik)
+  let remaining = DURATION;
+  let finished = false;
+
+  const timerEl = document.getElementById('timer');
+  const barEl = document.getElementById('bar');
+  const subtextEl = document.getElementById('subtext');
+  const doneMsgEl = document.getElementById('doneMsg');
+
+  function format(sec) {
+    const m = String(Math.floor(sec / 60)).padStart(2, '0');
+    const s = String(sec % 60).padStart(2, '0');
+    return m + ':' + s;
+  }
+
+  function tick() {
+    if (remaining <= 0) {
+      finished = true;
+      timerEl.textContent = "00:00";
+      subtextEl.style.display = 'none';
+      doneMsgEl.style.display = 'block';
+      barEl.style.width = '100%';
+      return;
+    }
+    timerEl.textContent = format(remaining);
+    const progress = ((DURATION - remaining) / DURATION) * 100;
+    barEl.style.width = progress + '%';
+    remaining--;
+    setTimeout(tick, 1000);
+  }
+
+  tick();
+
+  // Peringatan kalau user coba menutup/refresh tab sebelum timer selesai.
+  // Catatan: browser modern tidak mengizinkan blokir total,
+  // ini hanya menampilkan dialog konfirmasi "yakin mau keluar?"
+  window.addEventListener('beforeunload', function (e) {
+    if (!finished) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+</script>
+
+</body>
+</html>
